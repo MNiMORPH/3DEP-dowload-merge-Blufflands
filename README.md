@@ -41,4 +41,16 @@ do
 done < 0_file_download_links.txt
 ```
 
-Do something else while they all download.
+Do something else while they all download. This could include getting you GRASS GIS location ready
+
+## Set up GRASS GIS location
+
+First, open GRASS GIS. Then create a new location. If you need to learn how to do this, it should either be a button (7.x) or right-clicking on your main "database" in the menu and selecting "create new location (GRASS 8.x)".
+
+![Figure showing GRASS GIS location-creation screen](https://github.com/MNiMORPH/3DEP-dowload-merge-Blufflands/blob/main/figures/NewLocation__GRASS_GIS__SE_MN_3DEP_Lidar.png)
+
+Next, select **Read CRS from georeferenced data file**. This way, you won't need to figure out the map projection used on your own: GRASS will do this for you. After clicking "next", browse to a file in your now-populating one, and choose any of the geotiffs that has fully downloaded.
+
+Hit "next" again, and then "finish".
+
+Select "no" to the auto-import option.
