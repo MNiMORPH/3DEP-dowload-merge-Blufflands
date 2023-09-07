@@ -77,8 +77,8 @@ do
   # Use this for the name of the imported raster in GRASS
   filename_noext="${filename_full%.*}"
   # Then operate using this name
-  echo $filename_noext # Use this to test the code
-  # r.in.gdal in=$filename_full out=$filename_noext # Use this to bring the file into GRASS
+  # echo $filename_noext # Use this to test the code
+  r.in.gdal in=$filename_full out=$filename_noext # Use this to bring the file into GRASS
 done
 ```
 
