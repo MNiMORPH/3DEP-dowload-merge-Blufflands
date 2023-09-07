@@ -43,6 +43,7 @@ done < 0_file_download_links.txt
 
 Do something else while they all download. This could include getting you GRASS GIS location ready
 
+
 ## Set up GRASS GIS location
 
 First, open GRASS GIS. Then create a new location. If you need to learn how to do this, it should either be a button (7.x) or right-clicking on your main "database" in the menu and selecting "create new location (GRASS 8.x)".
@@ -54,3 +55,29 @@ Next, select **Read CRS from georeferenced data file**. This way, you won't need
 Hit "next" again, and then "finish".
 
 Select "no" to the auto-import option.
+
+
+## Import data into GRASS GIS
+
+### Import the files
+
+Use the terminal associated with GRASS GIS.
+
+![GRASS GIS screens: use the shell within which GRASS is running.](https://github.com/MNiMORPH/3DEP-dowload-merge-Blufflands/blob/main/figures/UseTerminal.png)
+
+Using this terminal window, navigate to the directory containing the downloaded raster files. Alternatively, you could use an absolute path instead of a relative path in the next step.
+
+Then, import the files.
+
+```bash
+# Loop over and import all DEM tiles to the GRASS location
+for filename_full in `ls *.tif`
+do
+  # Only the name, without the extension
+  # Use this for the name of the imported raster in GRASS
+  filename_noext="${filename_full%.*}"
+  # Then operate using this name
+  echo $filename_noext # Use this to test the code
+  # r.in.gdal in=$filename_full out=$filename_noext # Use this to bring the file into GRASS
+done
+```
