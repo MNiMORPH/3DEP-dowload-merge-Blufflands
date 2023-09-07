@@ -81,3 +81,27 @@ do
   # r.in.gdal in=$filename_full out=$filename_noext # Use this to bring the file into GRASS
 done
 ```
+
+### Create comma-separated list of all imported DEM tiles
+
+We then create a comma-separated list of all of the Geotiff files. We will use this next to set the computational region and patch together the tiles.
+
+```bash
+# Create a new file to list the names of the imported DEM tiles (comma-separated)
+touch filename_noext_list.csv
+# Empty the file in case it existed before
+> filename_noext_list.csv
+
+# Then perform a similar loop
+for filename_full in `ls *.tif`
+do
+  filename_noext="${filename_full%.*}"
+  echo $filename_noext # print to the screen
+  echo -n "$filename_noext" >> filename_noext_list.csv
+  echo -n "," >> filename_noext_list.csv
+done
+
+# Remove trailing comma
+sed -i '$ s/.$//' filename_noext_list.csv
+```
+
