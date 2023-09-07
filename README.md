@@ -107,6 +107,10 @@ sed -i '$ s/.$//' filename_noext_list.csv
 
 ### Merge all of the tiles into a single DEM
 
+#### All at once
+
+This doesn't work because there are too many files.
+
 ```bash
 # Send the comma-separated list to a variable
 read -r allnames < filename_noext_list.csv
@@ -116,4 +120,75 @@ g.region -p rast=$allnames
 
 # Patch all of the raster tiles together
 r.patch in=$allnames out=DEM_3DEP_2021
+```
+
+# Stepwise
+
+In order to manage this massive amount of files, let's split by something. The file names look like:
+```bash
+USGS_OPR_MN_SE_Driftless_2021_B21_6360_48220
+```
+Here, the last two numbers are coordinates.
+
+My idea here is to first group them based on the second-to-last coordinate into a set of somewhat larger tiles. To do so, we first find all instances of that number.
+
+The first step on the way to this lies in creating a new file listing each of our geotiff names (without the extension) on a single line:
+```bash
+touch filename_noext_list.txt
+# Empty the file in case it existed before
+> filename_noext_list.txt
+
+# Then perform a similar loop
+for filename_full in `ls *.tif`
+do
+  filename_noext="${filename_full%.*}"
+  echo $filename_noext # print to the screen
+  echo "$filename_noext" >> filename_noext_list.txt
+done
+```
+
+Then, loop over this file to place the second-to-last number in a new file:
+```bash
+touch coord1.txt
+> coord1.txt
+OLDIFS=$IFS
+IFS='_' # Set the delimiter value
+while read line
+do
+  read -r -a array <<< "$line"
+  echo "${array[-2]}"
+  echo "${array[-2]}" >> coord1.txt
+done < filename_noext_list.txt
+IFS=$OLDIFS # Return the input field separator to its default
+```
+
+Now, remove duplicate values therein:
+```bash
+sort -u coord1.txt > coord1_set.txt
+```
+
+Finally, set the region and patch for each subset:
+```bash
+touch coord1_files.csv
+touch outnames.csv
+> outnames.csv
+while read coord1
+do
+  > coord1_files.csv
+  for filename_full in `ls *${coord1}_?????.tif`
+  do
+    filename_noext="${filename_full%.*}"
+    #echo $filename_noext
+    echo -n "$filename_noext" >> coord1_files.csv
+    echo -n "," >> coord1_files.csv
+  done
+  sed -i '$ s/.$//' coord1_files.csv
+  echo -n "$outname" >> outnames.csv
+  echo -n "," >> outnames.csv
+  outname="partial_DEM_3DEP_2021_$coord1"
+  read -r selected_names < coord1_files.csv
+  g.region -p rast=$selected_names
+  r.patch in=$selected_names out=$outname
+done < coord1_set.txt
+sed -i '$ s/.$//' outnames.csv
 ```
