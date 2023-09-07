@@ -105,3 +105,15 @@ done
 sed -i '$ s/.$//' filename_noext_list.csv
 ```
 
+### Merge all of the tiles into a single DEM
+
+```bash
+# Send the comma-separated list to a variable
+read -r allnames < filename_noext_list.csv
+
+# Set the region to extend around all of the tiles
+g.region -p rast=$allnames
+
+# Patch all of the raster tiles together
+r.patch in=$allnames out=DEM_3DEP_2021
+```
