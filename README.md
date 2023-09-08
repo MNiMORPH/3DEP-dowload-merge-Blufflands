@@ -122,7 +122,7 @@ g.region -p rast=$allnames
 r.patch in=$allnames out=DEM_3DEP_2021
 ```
 
-# Stepwise
+## Stepwise
 
 In order to manage this massive amount of files, let's split by something. The file names look like:
 ```bash
@@ -167,7 +167,7 @@ Now, remove duplicate values therein:
 sort -u coord1.txt > coord1_set.txt
 ```
 
-Finally, set the region and patch for each subset:
+Semi-finally, set the region and patch for each subset:
 ```bash
 touch coord1_files.csv
 touch outnames.csv
@@ -191,4 +191,11 @@ do
   r.patch in=$selected_names out=$outname
 done < coord1_set.txt
 sed -i '$ s/.$//' outnames.csv
+```
+
+Then stitch the bands:
+```bash
+read -r vertical_strip_names < outnames.csv
+g.region -p rast=$vertical_strip_names
+r.patch in=$selected_names out=$vertical_strip_names
 ```
