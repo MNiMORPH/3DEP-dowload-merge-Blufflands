@@ -193,9 +193,19 @@ done < coord1_set.txt
 sed -i '$ s/.$//' outnames.csv
 ```
 
+Free disk space by removing the original tiles.
+```bash
+g.remove type=rast pattern="USGS_OPR_*"
+```
+
 Then stitch the bands:
 ```bash
 read -r vertical_strip_names < outnames.csv
 g.region -p rast=$vertical_strip_names
 r.patch in=$selected_names out=$vertical_strip_names
+```
+
+And free space by removing the stripe files
+```bash
+g.remove type=rast pattern="partial_DEM_3DEP_*"
 ```
