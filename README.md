@@ -195,17 +195,17 @@ sed -i '$ s/.$//' outnames.csv
 
 Free disk space by removing the original tiles.
 ```bash
-g.remove type=rast pattern="USGS_OPR_*"
+g.remove type=rast pattern="USGS_OPR_*" -f
 ```
 
 Then stitch the bands:
 ```bash
 read -r vertical_strip_names < outnames.csv
 g.region -p rast=$vertical_strip_names
-r.patch in=$selected_names out=$vertical_strip_names
+r.patch in=$vertical_strip_names out=SE_MN_3DEP_2021_ds2
 ```
 
 And free space by removing the stripe files
 ```bash
-g.remove type=rast pattern="partial_DEM_3DEP_*"
+g.remove type=rast pattern="partial_DEM_3DEP_*" -f
 ```
